@@ -57,7 +57,7 @@ endif
 echom s:host
 
 function! s:startDaemon(file) "{{{
-    if !executable('instantRst')
+    if !executable('instantRst.py')
         echoe "[InstantRst] intant-rst.py is required."
         echoe "sudo pip install https://github.com/Rykka/instant-rst.py/archive/master.zip"
         return -1
@@ -80,14 +80,14 @@ function! s:startDaemon(file) "{{{
         let args_file = a:file != '' ? 
                     \ ' -f '.a:file : ''
 
-        let  cmd = "instantRst "
+        let  cmd = "python c:\\bin\\python2\\Scripts\\instantRst.py "
                     \.args_browser
                     \.args_port
                     \.args_file
                     \.args_static
                     \.args_template
-                    \.' &>/dev/null'
-                    \.' &'
+                    "\.' &>/dev/null'
+                    "\.' &'
         call s:system(cmd)
         let g:_instant_rst_daemon_started = 1
     endif
@@ -110,7 +110,8 @@ endfun
 fun! s:refreshView()
     call s:updateTmpFile(bufnr('%'))
     let p = string(str2float(line('.')) / line('$'))
-    let cmd = "curl -d 'file=". b:ir_tmpfile ."' -d 'p=".p."'  http://" . s:host . ":".g:instant_rst_port." &>/dev/null &"
+    "Orig:let cmd = "curl -d 'file=". b:ir_tmpfile ."' -d 'p=".p."'  http://" . s:host . ":".g:instant_rst_port." &>/dev/null &"
+    let cmd = "curl -d file=". b:ir_tmpfile ." -d p=".p."  http://" . s:host . ":".g:instant_rst_port
     " >>> let cmd = 'curl -d name=hello http://' . s:host . ':'.g:instant_rst_port
     " >>> call s:system(cmd)
     call s:system(cmd)
@@ -125,7 +126,8 @@ fun! s:scroll() "{{{
 
     let b:scroll_pos = p
 
-    let cmd = "curl -d p='".p."' http://" . s:host . ":".g:instant_rst_port." &>/dev/null &"
+    "let cmd = "curl -d p='".p."' http://" . s:host . ":".g:instant_rst_port." &>/dev/null &"
+    let cmd = "curl -d p=".p." http://" . s:host . ":".g:instant_rst_port
     call s:system(cmd)
 
 endfun "}}}
